@@ -162,3 +162,90 @@ db.restaurants.updateOne(
         {"date" : ISODate("2020-02-25T00:00:00Z"),"grade" : "A","score" : 21}
     ]}}}
 );
+
+//-------------------------------------------[Practico 2]---------------------------------
+
+/*
+1
+Cantidad de cines (theaters) por estado
+*/
+use("mflix");
+db.theaters.aggregate([
+    {$group:{_id:"$location.address.state", totTheathers:{$count:{}}}}
+]);
+/*
+2
+Cantidad de estados con al menos dos cines (theaters) registrados.
+*/
+use("mflix");
+db.theaters.aggregate([
+    {$group: {_id: "$location.address.state", totTheaters:{$count:{}}}},
+    {$match: {totTheaters: { $gte: 2 }}},
+    {$count: "cantidadEstados"}
+]);
+/*
+3
+Cantidad de películas dirigidas por "Louis Lumière".
+Se puede responder sin pipeline de agregación. 
+Realizar ambas queries.
+*/
+use("mflix");
+db.movies.aggregate([
+    {$match: {"directors":"Louis Lumière"}},
+    {$count:"totalMoviesDirected"}
+]);
+use("mflix");
+db.movies.find({"directors":"Louis Lumière"}).count();
+/*
+4
+Cantidad de películas estrenadas en los años 50 (desde 1950 hasta 1959).
+Se puede responder sin pipeline de agregación.
+Realizar ambas queries.
+*/
+use("mflix");
+db.movies.aggregate([
+    {$match: {"released":{$gte:ISODate("1950-01-01"),$lt:ISODate("1960-01-01")}}},
+    {$count:"totalMoviesReleased"}
+]);
+use("mflix");
+db.movies.find({"released":{$gte:ISODate("1950-01-01"),$lt:ISODate("1960-01-01")}}).count();
+/*
+5
+Listar los 10 géneros con mayor cantidad de películas (tener en cuenta que las películas pueden tener más de un género).
+Devolver el género y la cantidad de películas.
+Hint: unwind puede ser de utilidad
+*/
+use("mflix");
+db.movies.aggregate([
+    {$group:{_id:"$genres", totMovies:{$count:{}}}},
+    {$sort:{"totMovies":-1}},
+    {$limit: 10}
+]);
+// con unwind(ahora no hay 2 o mas generos por group)
+use("mflix");
+db.movies.aggregate([
+    {$unwind:"$genres"},
+    {$group:{_id:"$genres", totMovies:{$count:{}}}},
+    {$sort:{"totMovies":-1}},
+    {$limit: 10},
+]);
+/*
+6
+Top 10 de usuarios con mayor cantidad de comentarios, mostrando Nombre, Email y Cantidad de Comentarios.
+*/
+use("mflix");
+db.comments.aggregate([
+    {$group:{_id:{name:"$name",email:"$email"}, totComments:{$count:{}}}},
+    {$sort:{"totComments":-1}},
+    {$limit: 10},
+    {$project:{_id:0,name:"$_id.name",email:"$_id.email",totComments:1}}
+]);
+/*
+7
+Ratings de IMDB promedio, mínimo y máximo por año,
+de las películas estrenadas en los años 80 (desde 1980 hasta 1989),
+ordenados de mayor a menor por promedio del año.
+*/
+db.movies.aggregate([
+    {$group:{}}
+]);

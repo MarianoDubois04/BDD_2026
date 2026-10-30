@@ -1,6 +1,6 @@
 # BDD 2026
 
-## Como correr el MONGODB DE MIERDA
+## Como correr el MONGODB DE MIERDA (por primera vez)
 
 - Tener docker instalado y andando
 - Correr el siguiente codigo en cualquier lugar
@@ -41,6 +41,11 @@ sudo docker exec mongo-labs mongoimport \
   - `Ctrl` + `Alt` + `S`
   - Dale a `Yes`
   - Se feliz (si sos tan bueno que te ande a la primera)
+
+### SI YA TENES EL CONTAINER HECHO
+```bash
+sudo docker start mongo-labs
+```
 
 ## Tips de la syntaxis
 
